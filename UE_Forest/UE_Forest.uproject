@@ -40,6 +40,10 @@
 				"Linux",
 				"Android"
 			]
+		},
+		{
+			"Name": "SunPosition",
+			"Enabled": true
 		}
 	]
 }
