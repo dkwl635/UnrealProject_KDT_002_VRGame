@@ -5,6 +5,20 @@
 #include "UI/MainUI.h"
 #include	"Interface/GameStart.h"
 #include "Kismet/GameplayStatics.h"
+#include "HeadMountedDisplayFunctionLibrary.h"
+APlayerController* AForestGameMode::Login(UPlayer* NewPlayer, ENetRole InRemoteRole, const FString& Portal, const FString& Options, const FUniqueNetIdRepl& UniqueId, FString& ErrorMessage)
+{
+	const bool bVR = UHeadMountedDisplayFunctionLibrary::IsHeadMountedDisplayEnabled();
+	//if (bVR)
+	if (true)
+	{
+		DefaultPawnClass = VRPawn;
+		//DefaultPawnClass = AVRCharacter::StaticClass();
+		//PlayerControllerClass = VRPlayerControllerClass;
+	}
+	return Super::Login(NewPlayer, InRemoteRole, Portal, Options, UniqueId, ErrorMessage);
+
+}
 void AForestGameMode::BeginPlay()
 {
 	Super::BeginPlay();

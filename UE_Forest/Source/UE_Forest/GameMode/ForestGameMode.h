@@ -14,12 +14,29 @@ class UE_FOREST_API AForestGameMode : public AGameMode
 {
 	GENERATED_BODY()
 	
+protected:
+	virtual APlayerController* Login(UPlayer* NewPlayer, ENetRole InRemoteRole, const FString& Portal, const FString& Options, const FUniqueNetIdRepl& UniqueId, FString& ErrorMessage) override;
+
 public:
 	virtual void BeginPlay() override;
 
 public:
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	TSubclassOf<class UUserWidget> MainUIWidgetClass;
+	TSubclassOf<APawn> DefaultPawn = nullptr;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TSubclassOf<APawn> VRPawn = nullptr;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TSubclassOf<APlayerController> DefaultPlayerControllerClass = nullptr;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TSubclassOf<APlayerController> VRPlayerControllerClass = nullptr;
+
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TSubclassOf<class UUserWidget> MainUIWidgetClass = nullptr;
 
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
