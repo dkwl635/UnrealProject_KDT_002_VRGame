@@ -13,7 +13,18 @@ public class UE_Forest : ModuleRules
           "XRBase", "HeadMountedDisplay"
         });
 
-		PrivateDependencyModuleNames.AddRange(new string[] {  });
+
+        if (Target.Type == TargetType.Editor)
+        {
+            PublicDependencyModuleNames.AddRange(new string[]
+            {
+                "UnrealEd"
+            });
+        }
+
+
+        PrivateDependencyModuleNames.AddRange(new string[] {  });
+
 
         // Uncomment if you are using Slate UI
         // PrivateDependencyModuleNames.AddRange(new string[] { "Slate", "SlateCore" });
