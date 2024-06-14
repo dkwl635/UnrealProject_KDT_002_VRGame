@@ -5,8 +5,6 @@
 #include "CoreMinimal.h"
 #include "Actor/Character/ForestCharacter.h"
 #include "MotionControllerComponent.h"
-#include "Input/BasicInputDataConfig.h"
-#include "Input/TestData.h"
 #include "VRCharacter.generated.h"
 
 /**
@@ -61,18 +59,17 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	class UVRHandSkeletalMeshComponent* RightHand;
 	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	class USphereComponent* LeftHandCollision;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	class USphereComponent* RightHandCollision;
+	
 public:
 	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	class UInputData* VRMoveInputData;
 
-	UBasicInputDataConfig* BasicInputDataConfig = nullptr;
-	
-	UPROPERTY(EditAnywhere , BlueprintReadWrite)
-	UBasicInputDataConfig* TestSS = nullptr;
-	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	UTestData* TestData = nullptr;
-	
 
 	//UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	//class UObject* VRHandsInputDataConfig;

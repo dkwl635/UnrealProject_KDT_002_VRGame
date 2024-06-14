@@ -14,7 +14,8 @@ class UE_FOREST_API UVRHandAnimInstance : public UAnimInstance
 {
 	GENERATED_BODY()
 	
-
+public:
+	friend class UVRHandSkeletalMeshComponent;
 protected:
 	virtual void NativeInitializeAnimation() override;
 	virtual void NativeUpdateAnimation(float DeltaSeconds) override;

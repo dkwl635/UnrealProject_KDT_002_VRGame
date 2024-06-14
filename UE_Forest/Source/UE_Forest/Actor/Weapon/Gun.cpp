@@ -51,18 +51,18 @@ void AGun::Shoot()
 	FVector SocketLocation = SkeletalMeshComponent->GetSocketLocation(SocketName);
 	FVector ForwardVector = GetActorForwardVector();
 \
-	// ·¹ÀÌÄ³½ºÆ® ½ÃÀÛ°ú ³¡ ÁöÁ¡ ¼³Á¤
-	FVector Start = SocketLocation;
-	FVector End = Start + (ForwardVector * 1000.0f); // 1000 À¯´Ö Àü¹æ
 
-	// ·¹ÀÌÄ³½ºÆ® È÷Æ® °á°ú ±¸Á¶Ã¼
+	FVector Start = SocketLocation;
+	FVector End = Start + (ForwardVector * 1000.0f); // 
+
+	
 	FHitResult HitResult;
 
-	// ·¹ÀÌÄ³½ºÆ® ÆÄ¶ó¹ÌÅÍ ¼³Á¤
+	
 	FCollisionQueryParams CollisionParams;
-	CollisionParams.AddIgnoredActor(this); // ÇöÀç ¾×ÅÍ ¹«½Ã
+	CollisionParams.AddIgnoredActor(this);
 
-	// ·¹ÀÌÄ³½ºÆ® ¼öÇà
+	// ï¿½ï¿½ï¿½ï¿½Ä³ï¿½ï¿½Æ® ï¿½ï¿½ï¿½ï¿½
 	bool bHit = GetWorld()->LineTraceSingleByChannel(
 		HitResult,
 		Start,
@@ -71,19 +71,19 @@ void AGun::Shoot()
 		CollisionParams
 	);
 
-	// ·¹ÀÌÄ³½ºÆ® °á°ú Ã³¸®
+
 	if (bHit)
 	{
 		UE_LOG(LogTemp, Log, TEXT("Hit: %s"), *HitResult.GetActor()->GetName());
-		// È÷Æ® ÁöÁ¡±îÁö µð¹ö±× ¶óÀÎ ±×¸®±â
+	
 		DrawDebugLine(GetWorld(), Start, HitResult.Location, FColor::Red, false, 2.0f, 0, 1.0f);
-		// È÷Æ® ÁöÁ¡¿¡ µð¹ö±× ½ºÇÇ¾î ±×¸®±â
+	
 		DrawDebugSphere(GetWorld(), HitResult.Location, 10.0f, 12, FColor::Red, false, 2.0f);
 
 		AActor* HitActor = HitResult.GetActor();
 		if (HitActor)
 		{
-			// µ¥¹ÌÁö ÀÌº¥Æ® º¸³»±â
+			// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ìºï¿½Æ® ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 			FDamageEvent DamageEvent;
 			float DamageAmount = 10.0f;
 			HitActor->TakeDamage(DamageAmount, DamageEvent, nullptr, this);
@@ -92,7 +92,7 @@ void AGun::Shoot()
 	else
 	{
 		UE_LOG(LogTemp, Log, TEXT("No Hit"));
-		// È÷Æ®°¡ ¾øÀ» ¶§ ³¡ ÁöÁ¡±îÁö µð¹ö±× ¶óÀÎ ±×¸®±â
+	
 		DrawDebugLine(GetWorld(), Start, End, FColor::Green, false, 2.0f, 0, 1.0f);
 	}
 
@@ -136,5 +136,54 @@ void AGun::AttachGun()
 {
 	AttachGun_Receive();
 }
+
+void AGun::Grab(UVRHandSkeletalMeshComponent* Hand)
+{
+	AttachGun();
+}
+
+void AGun::VRTrigger(float ActionValue)
+{
+	if(bOneShoot)
+	{
+		return;
+	}
+
+	if (FMath::IsNearlyEqual(ActionValue, 1))
+	{
+		Shoot();
+		bOneShoot = true;
+	}
+
+
+}
+void AGun::VRTriggerStart()
+{
+}
+
+void AGun::VRTriggerCompleted()
+{
+	bOneShoot = false;
+}
+
+
+
+void AGun::Release()
+{
+}
+
+void AGun::VRAction1()
+{
+}
+
+void AGun::VRAction2()
+{
+}
+
+void AGun::VRStick()
+{
+}
+
+
 
 

@@ -4,10 +4,11 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "Interface/VRGrabItem.h"
 #include "Gun.generated.h"
 
 UCLASS()
-class UE_FOREST_API AGun : public AActor
+class UE_FOREST_API AGun : public AActor , public IVRGrabItem
 {
 	GENERATED_BODY()
 	
@@ -47,6 +48,7 @@ private:
 	FName SocketName = TEXT("MuzzleFlash");
 
 public: 
+	bool bOneShoot = false;;
 	UFUNCTION(BlueprintCallable)
 	void Shoot();
 
@@ -59,4 +61,19 @@ public:
 	UFUNCTION(BlueprintImplementableEvent)
 	void AttachGun_Receive(); 
 	
+
+	// IVRGrabItem을(를) 통해 상속됨
+	void Grab(UVRHandSkeletalMeshComponent* Hand) override;
+	void VRTrigger(float ActionValue) override;
+	void VRTriggerStart() override;
+	void VRTriggerCompleted() override;
+	void Release() override;
+	void VRAction1() override;
+	void VRAction2() override;
+	void VRStick() override;
+
+
+
+	// IVRGrabItem을(를) 통해 상속됨
+
 };

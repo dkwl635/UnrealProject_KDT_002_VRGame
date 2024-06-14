@@ -3,9 +3,11 @@
 
 #include "Actor/Character/VRCharacter.h"
 #include "Components/VRHandSkeletalMeshComponent.h"
-#include "Input/BasicInputDataConfig.h"
+#include "Components/SphereComponent.h"
 #include "Camera/CameraComponent.h"
 #include "Kismet/KismetMathLibrary.h"
+#include "EnhancedInputSubsystems.h"
+#include  "Input/InputData.h"
 
 
 AVRCharacter::AVRCharacter()
@@ -23,6 +25,28 @@ AVRCharacter::AVRCharacter()
 	LeftHand = CreateDefaultSubobject<UVRHandSkeletalMeshComponent>(TEXT("LeftHand"));
 	LeftHand->SetupAttachment(MotionControllerLeft);
 
+	RightHand = CreateDefaultSubobject<UVRHandSkeletalMeshComponent>(TEXT("RightHand"));
+	RightHand->SetupAttachment(MotionControllerRight);
+
+	LeftHandCollision = CreateDefaultSubobject<USphereComponent>(TEXT("LeftHandCollision"));
+	LeftHandCollision->SetupAttachment(LeftHand);
+	LeftHandCollision->SetCollisionProfileName(TEXT("Hand"));
+	LeftHandCollision->CanCharacterStepUpOn = ECanBeCharacterBase::ECB_No;
+	
+
+	RightHandCollision = CreateDefaultSubobject<USphereComponent>(TEXT("RightHandCollision"));
+	RightHandCollision->SetupAttachment(RightHand);
+	RightHandCollision->SetCollisionProfileName(TEXT("Hand"));
+	RightHandCollision->CanCharacterStepUpOn = ECanBeCharacterBase::ECB_No;
+
+	const FTransform RTransform = FTransform(FRotator(25.0, 0.0, 90.0), FVector(-2.98, 3.5, 4.56));
+	RightHand->SetRelativeTransform(RTransform);
+
+	const FTransform LTransform = FTransform(FRotator(-25.0, 180.0, 90.0), FVector(-2.98, -3.5, 4.56));
+	LeftHand->SetRelativeTransform(LTransform);
+
+	LeftHand->bMirror = true;
+
 	{
 		/*LeftHandWidget = CreateDefaultSubobject<UWidgetComponent>(TEXT("LeftHandWidget"));
 		LeftHandWidget->SetupAttachment(MotionControllerLeft);
@@ -35,46 +59,18 @@ AVRCharacter::AVRCharacter()
 		LeftHandWidget->SetDrawSize(FVector2D(800.0, 800.0));*/
 	}
 
-	RightHand = CreateDefaultSubobject<UVRHandSkeletalMeshComponent>(TEXT("RightHand"));
-	RightHand->SetupAttachment(MotionControllerRight);
-
-
-	const FTransform RTransform = FTransform(FRotator(25.0, 0.0, 90.0), FVector(-2.98, 3.5, 4.56));
-	RightHand->SetRelativeTransform(RTransform);
-
-	const FTransform LTransform = FTransform(FRotator(-25.0, 180.0, 90.0), FVector(-2.98, -3.5, 4.56));
-	LeftHand->SetRelativeTransform(LTransform);
-
-	LeftHand->bMirror = true;
-
 }
 
 void AVRCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 
-	
-
 	if (APlayerController* PC = Cast<APlayerController>(GetController()))
 	{
 		UEnhancedInputLocalPlayerSubsystem* Subsystem =
 			ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(PC->GetLocalPlayer());
-
-		/*if (UBasicInputDataConfig* Input = Cast<UBasicInputDataConfig>(BasicInputDataConfig))
-		{
-			Subsystem->AddMappingContext(Input->InputMappingContext, 0);
-		}
-
-		if (UVRHandsInputDataConfig* VRInput = Cast<UVRHandsInputDataConfig>(BasicInputDataConfig))
-		{
-			Subsystem->AddMappingContext(VRInput->InputMappingContext, 0);
-		}*/
-		
 	
-
-		//// HandGraphLeft, HandGraphRight
-		//const UVRHandsAnimationInputDataConfig* VRHandsAnimationInputDataConfig = GetDefault<UVRHandsAnimationInputDataConfig>();
-		//Subsystem->AddMappingContext(VRHandsAnimationInputDataConfig->InputMappingContext, 1);
+		Subsystem->AddMappingContext(LeftHand->InputData->InputMappingContext, 1);
 	}
 	else {  }
 }
@@ -86,15 +82,39 @@ void AVRCharacter::Tick(float DeltaTime)
 
 void AVRCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
-	Super::SetupPlayerInputComponent(PlayerInputComponent);
+	//Super::SetupPlayerInputComponent(PlayerInputComponent);
+	if (!MoveInputData) { return; }
 
-	UEnhancedInputComponent* EnhancedInputComponent = Cast<UEnhancedInputComponent>(PlayerInputComponent);
+	// Set up action bindings
+	if (UEnhancedInputComponent* EnhancedInputComponent = Cast<UEnhancedInputComponent>(PlayerInputComponent))
+	{
+		// Moving
+		EnhancedInputComponent->BindAction(MoveInputData->Move, ETriggerEvent::Triggered, this, &AVRCharacter::OnVRMove);
+
+		// Looking
+		//EnhancedInputComponent->BindAction(MoveInputData->Look, ETriggerEvent::Triggered, this, &AForestCharacter::Look);
+
+		LeftHand->SetupPlayerInputComponent(EnhancedInputComponent);
+		RightHand->SetupPlayerInputComponent(EnhancedInputComponent);
+	//OnComponentBeginOverlap
+		RightHandCollision->OnComponentBeginOverlap.AddDynamic(RightHand ,&UVRHandSkeletalMeshComponent::OnOverlapBegin);
+		LeftHandCollision->OnComponentBeginOverlap.AddDynamic(LeftHand ,&UVRHandSkeletalMeshComponent::OnOverlapBegin);
+	//OnComponentEndOverlap
+		RightHandCollision->OnComponentEndOverlap.AddDynamic(RightHand, &UVRHandSkeletalMeshComponent::OnOverlapEnd);
+		LeftHandCollision->OnComponentEndOverlap.AddDynamic(LeftHand, &UVRHandSkeletalMeshComponent::OnOverlapEnd);
+
+	}
+	else
+	{
+
+	}
+	/*UEnhancedInputComponent* EnhancedInputComponent = Cast<UEnhancedInputComponent>(PlayerInputComponent);
 	
 	if(BasicInputDataConfig)
 	{
 		UBasicInputDataConfig* Input = (UBasicInputDataConfig*)(BasicInputDataConfig);
 		EnhancedInputComponent->BindAction(Input->Move, ETriggerEvent::Triggered, this, &ThisClass::OnVRMove);
-	}
+	}*/
 
 	
 
@@ -118,6 +138,7 @@ void AVRCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompone
 
 void AVRCharacter::OnVRMove(const FInputActionValue& InputActionValue)
 {
+
 	const FVector2D ActionValue = InputActionValue.Get<FVector2D>();
 
 	const FRotator CameraRotator = FollowCamera->GetRelativeRotation();

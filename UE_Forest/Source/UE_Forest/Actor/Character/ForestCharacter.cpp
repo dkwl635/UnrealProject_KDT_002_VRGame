@@ -10,6 +10,8 @@
 #include "EnhancedInputSubsystems.h"
 #include "InputMappingContext.h"
 #include "GameMode/ForestGameMode.h"
+#include "Input/InputData.h"
+#include "Kismet/KismetMathLibrary.h"
 
 // Sets default values
 AForestCharacter::AForestCharacter()
@@ -59,9 +61,11 @@ void AForestCharacter::BeginPlay()
 	//Add Input Mapping Context
 	if (APlayerController* PlayerController = Cast<APlayerController>(Controller))
 	{
-		if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(PlayerController->GetLocalPlayer()))
-		{
-			Subsystem->AddMappingContext(DefaultMappingContext, 0);
+		if (MoveInputData) {
+			if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(PlayerController->GetLocalPlayer()))
+			{
+				Subsystem->AddMappingContext(MoveInputData->InputMappingContext, 0);
+			}
 		}
 	}
 
@@ -92,14 +96,16 @@ void AForestCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
+	if (!MoveInputData) { return; }
+
 	// Set up action bindings
 	if (UEnhancedInputComponent* EnhancedInputComponent = Cast<UEnhancedInputComponent>(PlayerInputComponent)) 
 	{
 		// Moving
-		EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &AForestCharacter::Move);
+		EnhancedInputComponent->BindAction(MoveInputData->Move, ETriggerEvent::Triggered, this, &AForestCharacter::Move);
 
 		// Looking
-		EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &AForestCharacter::Look);
+		EnhancedInputComponent->BindAction(MoveInputData->Look, ETriggerEvent::Triggered, this, &AForestCharacter::Look);
 	}
 	else
 	{
@@ -110,24 +116,25 @@ void AForestCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 void AForestCharacter::Move(const FInputActionValue& Value)
 {
 	// input is a Vector2D
-	FVector2D MovementVector =  Value.Get<FVector2D>();
+	
+	const FVector2D ActionValue = Value.Get<FVector2D>();
 
-	if (Controller != nullptr)
+	const FRotator CameraRotator = FollowCamera->GetRelativeRotation();
+	const FRotator CameraYawRotator = FRotator(0., CameraRotator.Yaw, 0.);
+
+	if (!FMath::IsNearlyZero(ActionValue.Y))
 	{
-		// find out which way is forward
-		const FRotator Rotation = Controller->GetControlRotation();
-		const FRotator YawRotation(0, Rotation.Yaw, 0);
-
-		// get forward vector
-		const FVector ForwardDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);
-
-		// get right vector 
-		const FVector RightDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);
-
-		// add movement 
-		AddMovementInput(ForwardDirection, MovementVector.Y);
-		AddMovementInput(RightDirection, MovementVector.X);
+		const FVector ForwardVector = UKismetMathLibrary::GetForwardVector(CameraYawRotator);
+		AddMovementInput(ForwardVector, ActionValue.Y);
 	}
+
+	if (!FMath::IsNearlyZero(ActionValue.X))
+	{
+		const FVector RightVector = UKismetMathLibrary::GetRightVector(CameraYawRotator);
+		AddMovementInput(RightVector, ActionValue.X);
+	}
+	
+	
 }
 
 void AForestCharacter::Look(const FInputActionValue& Value)
