@@ -21,7 +21,7 @@ protected:
 	virtual void NativeUpdateAnimation(float DeltaSeconds) override;
 
 protected:
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	bool bMirror = false;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
