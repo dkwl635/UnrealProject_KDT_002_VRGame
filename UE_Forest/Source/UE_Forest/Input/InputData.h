@@ -78,4 +78,17 @@ public:
 	UInputAction* IA_Thumb_Left = nullptr;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	UInputAction* IA_Thumb_Right = nullptr;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UInputAction* IA_Action1_Right = nullptr;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UInputAction* IA_Action2_Right = nullptr;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UInputAction* IA_Action1_Left = nullptr;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UInputAction* IA_Action2_Left = nullptr;
+
 };

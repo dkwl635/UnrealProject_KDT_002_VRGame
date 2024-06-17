@@ -70,6 +70,8 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	class UInputData* VRMoveInputData;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	class UVRUWidgetInteractionComponent* VRUWidgetInteractionComponent;
 
 	//UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	//class UObject* VRHandsInputDataConfig;
@@ -83,6 +85,7 @@ public:
 
 	//UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	//class UWidgetComponent* LeftHandWidget;
+
 
 
 

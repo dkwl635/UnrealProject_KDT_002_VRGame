@@ -7,6 +7,18 @@
 #include "Interface/VRGrabItem.h"
 #include "Gun.generated.h"
 
+USTRUCT(BlueprintType)
+struct FAttachPos
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere , BlueprintReadWrite)
+	FVector Pos = FVector::ZeroVector;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FRotator Rot = FRotator::ZeroRotator;
+};
+
+
 UCLASS()
 class UE_FOREST_API AGun : public AActor , public IVRGrabItem
 {
@@ -44,8 +56,24 @@ private:
 	int8 MaxMagazineAmmo = 0;
 
 	
-
+	
 	FName SocketName = TEXT("MuzzleFlash");
+
+public:
+	
+	bool bHave = false;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Meta = (AllowPrivateAccess = true))
+	TSubclassOf<class UVRHandAnimInstance> HandAnimClass = nullptr;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite,Meta = (AllowPrivateAccess = true))
+	FAttachPos AttachPos_R;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite,Meta = (AllowPrivateAccess = true))
+	FAttachPos AttachPos_L;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Materials")
+	class UMaterialInterface* OriginalMaterial;
+
 
 public: 
 	bool bOneShoot = false;;
@@ -61,8 +89,14 @@ public:
 	UFUNCTION(BlueprintImplementableEvent)
 	void AttachGun_Receive(); 
 	
+		UFUNCTION(BlueprintImplementableEvent)
+	void DetachGun_Receive();
+
+
 
 	// IVRGrabItem을(를) 통해 상속됨
+	class TSubclassOf <class UVRHandAnimInstance > GetHandAnimClass() override;
+	void CheckGrab(bool InHand) override;
 	void Grab(UVRHandSkeletalMeshComponent* Hand) override;
 	void VRTrigger(float ActionValue) override;
 	void VRTriggerStart() override;
@@ -71,6 +105,7 @@ public:
 	void VRAction1() override;
 	void VRAction2() override;
 	void VRStick() override;
+	bool CheckHave() override;
 
 
 

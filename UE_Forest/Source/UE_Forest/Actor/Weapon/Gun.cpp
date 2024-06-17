@@ -6,6 +6,9 @@
 #include "Kismet/KismetSystemLibrary.h"
 #include "Engine/DamageEvents.h"
 #include "NiagaraComponent.h"
+#include "AnimInstance//VRHandAnimInstance.h"
+#include "Materials/MaterialInterface.h"
+
 
 #include "DrawDebugHelpers.h"
 
@@ -28,14 +31,18 @@ AGun::AGun()
 void AGun::BeginPlay()
 {
 	Super::BeginPlay();
-
+	bHave = false;
 	WeaponAnimInstance = Cast<UWeaponAnimInstance>(SkeletalMeshComponent->GetAnimInstance());
+	OriginalMaterial = SkeletalMeshComponent->OverlayMaterial;
+	SkeletalMeshComponent->SetOverlayMaterial(nullptr);
 }
 
 
 
 void AGun::Shoot()
 {
+	
+
 	if (!WeaponAnimInstance) { return; }
 	if (WeaponAnimInstance->IsAnyMontagePlaying()) { return; }
 	if (!SkeletalMeshComponent->DoesSocketExist(SocketName)) { return; }
@@ -137,8 +144,45 @@ void AGun::AttachGun()
 	AttachGun_Receive();
 }
 
+TSubclassOf<UVRHandAnimInstance> AGun::GetHandAnimClass()
+{
+
+	return HandAnimClass;
+}
+
+void AGun::CheckGrab(bool InHand)
+{
+
+	if (InHand)
+	{
+		SkeletalMeshComponent->SetOverlayMaterial(OriginalMaterial);
+	}
+	else
+	{
+		SkeletalMeshComponent->SetOverlayMaterial(nullptr);
+	}
+
+}
+
 void AGun::Grab(UVRHandSkeletalMeshComponent* Hand)
 {
+	CheckGrab(false);
+
+	if (Hand->bMirror)
+	{
+		SetActorRelativeLocation(AttachPos_L.Pos);
+		SetActorRelativeRotation(AttachPos_L.Rot);
+	}
+	else
+	{
+		SetActorRelativeLocation(AttachPos_R.Pos);
+		SetActorRelativeRotation(AttachPos_R.Rot);
+	}
+	bHave = true;
+	//SetActorLocation(AttachPos_R.Pos);
+
+	
+
 	AttachGun();
 }
 
@@ -170,18 +214,39 @@ void AGun::VRTriggerCompleted()
 
 void AGun::Release()
 {
+	DetachGun_Receive();
+	SetActorRelativeLocation(FVector::ZeroVector);
+	
+	bHave = false;
+
+	FDetachmentTransformRules DetachmentRules(EDetachmentRule::KeepWorld, true);
+	this->DetachFromActor(DetachmentRules);
+	
+	
+	SetActorRelativeRotation(FRotator::ZeroRotator);
+	
+SphereComponent->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+SphereComponent->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+
 }
 
 void AGun::VRAction1()
 {
+	Reload();
 }
 
 void AGun::VRAction2()
 {
+	Release();
 }
 
 void AGun::VRStick()
 {
+}
+
+bool AGun::CheckHave()
+{
+	return bHave;
 }
 
 

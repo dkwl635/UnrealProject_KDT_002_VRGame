@@ -16,11 +16,13 @@ class UE_FOREST_API UVRHandSkeletalMeshComponent : public USkeletalMeshComponent
 {
 	GENERATED_BODY()
 public:
-
+	UVRHandSkeletalMeshComponent();
 	virtual void BeginPlay() override;
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	class UVRHandAnimInstance* HandAnimInstance;
+
+	class TSubclassOf<UVRHandAnimInstance> OrginHandAnimClass;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	class UVRHandsAnimationInputDataConfig* InputData;
@@ -28,7 +30,8 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	bool bMirror = false;
 
-
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input)
+	class AUILaser* UILaser;
 public:
 	enum EHandType
 	{
@@ -55,7 +58,12 @@ public:
 	void OnThumbStarted(const FInputActionValue& InputActionValue);
 	void OnThumbCompleted(const FInputActionValue& InputActionValue);
 
+	void OnAction1Trigger(const FInputActionValue& InputActionValue);
+	void OnAction2Trigger(const FInputActionValue& InputActionValue);
+	
+
 	EHandType HandType = (EHandType)-1;
+
 
 public:
 	UPROPERTY(VisibleAnywhere , BlueprintReadOnly)
@@ -66,6 +74,8 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	AActor* EnterActor = nullptr;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	class UVRUWidgetInteractionComponent* VRUWidgetInteractionComponent;
 
 	UFUNCTION()
 	void OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
@@ -73,6 +83,7 @@ public:
 	void OnOverlapEnd(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
 
 	void TryGrab();
+	void DropGrab();
 
 
 };

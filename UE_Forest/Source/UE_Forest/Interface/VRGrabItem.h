@@ -24,6 +24,8 @@ class UE_FOREST_API IVRGrabItem
 	// Add interface functions to this class. This is the class that will be inherited to implement this interface.
 public:
 
+	virtual class TSubclassOf<class UVRHandAnimInstance> GetHandAnimClass() { return nullptr; }
+	virtual void CheckGrab(bool InHand) = 0;
 	virtual void Grab(UVRHandSkeletalMeshComponent* Hand) = 0;
 	virtual void VRTriggerStart() = 0;
 	virtual void VRTrigger(float ActionValue) = 0;
@@ -32,4 +34,6 @@ public:
 	virtual void VRAction1() = 0;
 	virtual void VRAction2() = 0;
 	virtual void VRStick() = 0;
+	virtual bool CheckHave() { return false; }
+	
 };

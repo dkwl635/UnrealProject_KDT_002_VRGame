@@ -8,6 +8,8 @@
 #include "Kismet/KismetMathLibrary.h"
 #include "EnhancedInputSubsystems.h"
 #include  "Input/InputData.h"
+#include "Components/WidgetInteractionComponent.h"
+#include "Components/VRUWidgetInteractionComponent.h"
 
 
 AVRCharacter::AVRCharacter()
@@ -38,6 +40,11 @@ AVRCharacter::AVRCharacter()
 	RightHandCollision->SetupAttachment(RightHand);
 	RightHandCollision->SetCollisionProfileName(TEXT("Hand"));
 	RightHandCollision->CanCharacterStepUpOn = ECanBeCharacterBase::ECB_No;
+
+    VRUWidgetInteractionComponent = CreateDefaultSubobject<UVRUWidgetInteractionComponent>(TEXT("VRUWidgetInteractionComponent"));
+	VRUWidgetInteractionComponent->SetupAttachment(RightHand);
+	RightHand->VRUWidgetInteractionComponent = VRUWidgetInteractionComponent;
+	//VRUWidgetInteractionComponent->Show();
 
 	const FTransform RTransform = FTransform(FRotator(25.0, 0.0, 90.0), FVector(-2.98, 3.5, 4.56));
 	RightHand->SetRelativeTransform(RTransform);
@@ -73,6 +80,7 @@ void AVRCharacter::BeginPlay()
 		Subsystem->AddMappingContext(LeftHand->InputData->InputMappingContext, 1);
 	}
 	else {  }
+
 }
 
 void AVRCharacter::Tick(float DeltaTime)
