@@ -13,8 +13,6 @@ UCLASS()
 class UE_FOREST_API UMainUI : public UUserWidget
 {
 	GENERATED_BODY()
-	
-
 public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
@@ -25,9 +23,15 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
 	class UTextBlock* GameClearTextBlock;
+
+
+
 public:
 
 	void SetBloodUI(float PlayerPoint);
 	void ShowGameOver();
 	void ShowGameClear();
+
+
+
 };

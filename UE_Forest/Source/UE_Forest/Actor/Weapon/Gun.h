@@ -7,16 +7,7 @@
 #include "Interface/VRGrabItem.h"
 #include "Gun.generated.h"
 
-USTRUCT(BlueprintType)
-struct FAttachPos
-{
-	GENERATED_BODY()
 
-	UPROPERTY(EditAnywhere , BlueprintReadWrite)
-	FVector Pos = FVector::ZeroVector;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	FRotator Rot = FRotator::ZeroRotator;
-};
 
 
 UCLASS()
@@ -73,6 +64,7 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Materials")
 	class UMaterialInterface* OriginalMaterial;
+
 
 
 public: 

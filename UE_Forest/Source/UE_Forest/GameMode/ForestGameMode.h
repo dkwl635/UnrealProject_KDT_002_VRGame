@@ -48,10 +48,10 @@ public:
 private:
 	class UMainUI* MainUI;
 
-
 	bool bGamePlay = false;
 public :
 	float PlayerPoint = 100.0f;
+	class UArmUI* ArmUI;
 
 public:
 	virtual void Tick(float DeltaSeconds) override;

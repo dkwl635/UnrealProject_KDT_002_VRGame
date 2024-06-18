@@ -72,6 +72,9 @@ void AVRCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 
+	
+	
+
 	if (APlayerController* PC = Cast<APlayerController>(GetController()))
 	{
 		UEnhancedInputLocalPlayerSubsystem* Subsystem =
@@ -79,7 +82,7 @@ void AVRCharacter::BeginPlay()
 	
 		Subsystem->AddMappingContext(LeftHand->InputData->InputMappingContext, 1);
 	}
-	else {  }
+	
 
 }
 
@@ -147,6 +150,8 @@ void AVRCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompone
 void AVRCharacter::OnVRMove(const FInputActionValue& InputActionValue)
 {
 
+	if (!bGameStart) { return; }
+
 	const FVector2D ActionValue = InputActionValue.Get<FVector2D>();
 
 	const FRotator CameraRotator = FollowCamera->GetRelativeRotation();
@@ -173,4 +178,9 @@ void AVRCharacter::OnGrabStarted(UMotionControllerComponent* MotionControllerCom
 void AVRCharacter::OnGrabCompleted(UMotionControllerComponent* MotionControllerComponent, const bool bLeft, const FInputActionValue& InputActionValue)
 {
 	GEngine->AddOnScreenDebugMessage(INDEX_NONE, 5.f, FColor::Red, TEXT("OnGrabCompleted"));
+}
+
+void AVRCharacter::ForestGameStart()
+{
+	bGameStart = true;
 }

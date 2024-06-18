@@ -144,6 +144,8 @@ void AGun::AttachGun()
 	AttachGun_Receive();
 }
 
+
+
 TSubclassOf<UVRHandAnimInstance> AGun::GetHandAnimClass()
 {
 

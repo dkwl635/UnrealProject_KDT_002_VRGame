@@ -6,11 +6,13 @@
 #include	"Interface/GameStart.h"
 #include "Kismet/GameplayStatics.h"
 #include "HeadMountedDisplayFunctionLibrary.h"
+#include "UI/ArmUI.h"
+
 APlayerController* AForestGameMode::Login(UPlayer* NewPlayer, ENetRole InRemoteRole, const FString& Portal, const FString& Options, const FUniqueNetIdRepl& UniqueId, FString& ErrorMessage)
 {
 	const bool bVR = UHeadMountedDisplayFunctionLibrary::IsHeadMountedDisplayEnabled();
-	//if (bVR)
-	if (true)
+	if (bVR)
+	//if (true)
 	{
 		DefaultPawnClass = VRPawn;
 		//DefaultPawnClass = AVRCharacter::StaticClass();
@@ -48,13 +50,18 @@ void AForestGameMode::Tick(float DeltaSeconds)
 
 	PlayerPoint += DeltaSeconds;
 	MainUI->SetBloodUI(PlayerPoint);
+
+
+	if (ArmUI)
+	{
+		ArmUI->SetPercent(PlayerPoint * 0.01f);
+	}
 }
 
 void AForestGameMode::TakeDamageCharacter()
 {
 
 	PlayerPoint -= 10.0f;
-	MainUI->SetBloodUI(PlayerPoint);
 
 	if (PlayerPoint <= 0.0f)
 	{
@@ -71,6 +78,11 @@ void AForestGameMode::AddOrb()
 	{
 		GameClear();
 	}
+
+	if (ArmUI)
+	{
+		ArmUI->SetCount(OrbCount);
+	}
 }
 
 void AForestGameMode::GameStart()
@@ -85,6 +97,13 @@ void AForestGameMode::GameStart()
 		{
 			Interface->ForestGameStart();
 		}
+	}
+
+
+	if (ArmUI)
+	{
+		ArmUI->SetPercent(1);
+		ArmUI->SetCount(0);
 	}
 
 

@@ -9,6 +9,7 @@ void UVRUWidgetInteractionComponent::BeginPlay()
 	Super::BeginPlay();
 
 	NS_Beam = Cast<UNiagaraComponent>(GetChildComponent(0));
+	Show();
 }
 
 void UVRUWidgetInteractionComponent::CheckGrab(bool InHand)

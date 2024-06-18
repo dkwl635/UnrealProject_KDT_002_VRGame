@@ -17,6 +17,18 @@ class UVRGrabItem : public UInterface
 /**
  * 
  */
+
+USTRUCT(BlueprintType)
+struct FAttachPos
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FVector Pos = FVector::ZeroVector;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FRotator Rot = FRotator::ZeroRotator;
+};
+
 class UE_FOREST_API IVRGrabItem
 {
 	GENERATED_BODY()

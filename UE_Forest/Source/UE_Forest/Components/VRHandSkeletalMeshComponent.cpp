@@ -108,9 +108,12 @@ void UVRHandSkeletalMeshComponent::OnIndexCurlTriggered(const FInputActionValue&
 	const float ActionValue = InputActionValue.Get<float>();
 	HandAnimInstance->PoseAlphaIndexCurl = ActionValue;
 
-	if (GrabItem)
+	if (IsGrab)
 	{
-		GrabItem->VRTrigger(ActionValue);
+		if (GrabItem)
+		{
+			GrabItem->VRTrigger(ActionValue);
+		}
 	}
 	else
 	{
@@ -124,10 +127,12 @@ void UVRHandSkeletalMeshComponent::OnIndexCurlTriggered(const FInputActionValue&
 void UVRHandSkeletalMeshComponent::OnIndexCurlCompleted(const FInputActionValue& InputActionValue)
 {
 	HandAnimInstance->PoseAlphaIndexCurl = 0.f;
-
-	if (GrabItem)
+	if (IsGrab)
 	{
-		GrabItem->VRTriggerCompleted();
+		if (GrabItem)
+		{
+			GrabItem->VRTriggerCompleted();
+		}
 	}
 	else
 	{
@@ -150,21 +155,30 @@ void UVRHandSkeletalMeshComponent::OnThumbCompleted(const FInputActionValue& Inp
 
 void UVRHandSkeletalMeshComponent::OnAction1Trigger(const FInputActionValue& InputActionValue)
 {
-	if (GrabItem)
+
+	if (IsGrab)
 	{
-		GrabItem->VRAction1();
+		if (GrabItem)
+		{
+			GrabItem->VRAction1();
+		}
 	}
+
+	
 }
 
 void UVRHandSkeletalMeshComponent::OnAction2Trigger(const FInputActionValue& InputActionValue)
 {
-	if (GrabItem)
+	if (IsGrab)
 	{
-		GrabItem->VRAction2();
-		
-		DropGrab();
+		if (GrabItem)
+		{
+			GrabItem->VRAction2();
+
+			DropGrab();
+		}
 	}
-}
+	}
 
 void UVRHandSkeletalMeshComponent::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
