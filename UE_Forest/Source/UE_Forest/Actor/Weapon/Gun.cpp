@@ -230,6 +230,7 @@ void AGun::Release()
 SphereComponent->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 SphereComponent->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
 
+SetActorRelativeLocation(FVector(GetActorLocation().X, GetActorLocation().Y, 130.f));
 }
 
 void AGun::VRAction1()

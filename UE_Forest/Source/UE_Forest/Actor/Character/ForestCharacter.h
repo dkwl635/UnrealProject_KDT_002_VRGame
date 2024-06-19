@@ -28,8 +28,6 @@ public:
 	/** MappingContext */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	class UInputData* MoveInputData;
-
-
 	//class UInputMappingContext* DefaultMappingContext;
 
 	///** Move Input Action */

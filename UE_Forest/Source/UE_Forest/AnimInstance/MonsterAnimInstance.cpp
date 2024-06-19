@@ -40,4 +40,7 @@ void UMonsterAnimInstance::AnimNotify_DieEvenet()
 	{
 		DieEvenet.Execute();
 	}
+
+	
+	
 }

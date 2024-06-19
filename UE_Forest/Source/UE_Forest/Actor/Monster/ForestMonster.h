@@ -57,6 +57,12 @@ private:
 	FName IsAttackKey = "IsAttack";
 	FName TargetKey = "Target";
 
+	class UMaterialInstanceDynamic* DynMaterial = nullptr;
+
+
+
+
+
 	bool isDie = false;
 
 	ECollisionEnabled::Type BodyOrginECollision;
@@ -93,7 +99,6 @@ public:
 	UFUNCTION(BlueprintImplementableEvent)
 	void TakeSuccessDamage();
 
-	// IAttack을(를) 통해 상속됨
 	void StartAttack()override;
 	void OnAttack() override;
 	void AttackDamage() override;
@@ -105,12 +110,9 @@ public:
 	void Die();
 	void MonsterDisable();
 	void MonsterSpawn();
+	UFUNCTION(BlueprintImplementableEvent)
+	void MonsterSpawnEvent();
 
-
-	
-	
-
-	// IGameStart을(를) 통해 상속됨
 	void ForestGameStart() override;
 
 };

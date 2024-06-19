@@ -25,6 +25,7 @@ public:
 	UInputAction* Move = nullptr;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	UInputAction* Look = nullptr;
+
 };
 
 UCLASS(Blueprintable, BlueprintType)

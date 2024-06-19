@@ -89,7 +89,9 @@ void AFlashLight::Release()
 
 	SphereComponent->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	SphereComponent->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
-	
+
+	SetActorRelativeLocation(FVector(GetActorLocation().X, GetActorLocation().Y, 130.f));
+
 	Detach_Receive();
 }
 

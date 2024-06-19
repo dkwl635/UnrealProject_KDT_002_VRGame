@@ -38,6 +38,7 @@ public:
 	//void SetLeftHandWidgetClass(TSubclassOf<UUserWidget> InWidgetClass);
 
 	void OnVRMove(const FInputActionValue& InputActionValue);
+	void OnVRRot(const FInputActionValue& InputActionValue);
 
 	void OnGrabLeftStarted(const FInputActionValue& InputActionValue) { OnGrabStarted(MotionControllerLeft, true, InputActionValue); }
 	void OnGrabRightStarted(const FInputActionValue& InputActionValue) { OnGrabStarted(MotionControllerRight, false, InputActionValue); }

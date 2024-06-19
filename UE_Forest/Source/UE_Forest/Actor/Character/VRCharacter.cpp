@@ -101,6 +101,9 @@ void AVRCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompone
 	{
 		// Moving
 		EnhancedInputComponent->BindAction(MoveInputData->Move, ETriggerEvent::Triggered, this, &AVRCharacter::OnVRMove);
+			EnhancedInputComponent->BindAction(MoveInputData->Look, ETriggerEvent::Triggered, this, &AVRCharacter::OnVRRot);
+		
+		//EnhancedInputComponent->BindAction(MoveInputData->Move, ETriggerEvent::Triggered, this, &AVRCharacter::OnVRMove);
 
 		// Looking
 		//EnhancedInputComponent->BindAction(MoveInputData->Look, ETriggerEvent::Triggered, this, &AForestCharacter::Look);
@@ -154,7 +157,7 @@ void AVRCharacter::OnVRMove(const FInputActionValue& InputActionValue)
 
 	const FVector2D ActionValue = InputActionValue.Get<FVector2D>();
 
-	const FRotator CameraRotator = FollowCamera->GetRelativeRotation();
+	const FRotator CameraRotator = FollowCamera->GetRelativeRotation() + GetActorRotation();
 	const FRotator CameraYawRotator = FRotator(0., CameraRotator.Yaw, 0.);
 
 	if (!FMath::IsNearlyZero(ActionValue.Y))
@@ -168,6 +171,23 @@ void AVRCharacter::OnVRMove(const FInputActionValue& InputActionValue)
 		const FVector RightVector = UKismetMathLibrary::GetRightVector(CameraYawRotator);
 		AddMovementInput(RightVector, ActionValue.X);
 	}
+}
+
+void AVRCharacter::OnVRRot(const FInputActionValue& InputActionValue)
+{
+	float AxisValue = InputActionValue.Get<FVector2D>().X;
+
+	
+	float RotationAmount = AxisValue * 5.0f; // 회전 속도를 조절할 수 있습니다.
+
+	
+	FRotator CurrentRotation = GetActorRotation();
+
+	
+	FRotator NewRotation = FRotator(0.0f, CurrentRotation.Yaw + RotationAmount, 0.0f);
+
+
+	SetActorRotation(NewRotation);
 }
 
 void AVRCharacter::OnGrabStarted(UMotionControllerComponent* MotionControllerComponent, const bool bLeft, const FInputActionValue& InputActionValue)
