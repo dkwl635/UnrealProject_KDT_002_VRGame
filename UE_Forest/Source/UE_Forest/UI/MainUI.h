@@ -15,20 +15,20 @@ class UE_FOREST_API UMainUI : public UUserWidget
 	GENERATED_BODY()
 public:
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
-	class UImage* Blood;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
-	class UTextBlock* GameOverTextBlock;
+	class UCanvasPanel* WinPanel;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
-	class UTextBlock* GameClearTextBlock;
+	class UCanvasPanel* LosePanel;
 
-
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
+	class UCanvasPanel* ButtonPanel;
 
 public:
+	UFUNCTION(BlueprintCallable)
+	void BeginPlay();
 
-	void SetBloodUI(float PlayerPoint);
 	void ShowGameOver();
 	void ShowGameClear();
 

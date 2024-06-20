@@ -3,7 +3,8 @@
 
 #include "GameMode/ForestGameMode.h"
 #include "UI/MainUI.h"
-#include	"Interface/GameStart.h"
+#include "UI/BloodUI.h"
+#include "Interface/GameStart.h"
 #include "Kismet/GameplayStatics.h"
 #include "HeadMountedDisplayFunctionLibrary.h"
 #include "UI/ArmUI.h"
@@ -25,12 +26,12 @@ void AForestGameMode::BeginPlay()
 {
 	Super::BeginPlay();
 
-	if (MainUIWidgetClass != nullptr)
+	if (BloodWidgetClass != nullptr)
 	{
-		MainUI = CreateWidget<UMainUI>(GetWorld(), MainUIWidgetClass);
-		if (MainUI != nullptr)
+		BloodUI = CreateWidget<UBloodUI>(GetWorld(), BloodWidgetClass);
+		if (BloodUI != nullptr)
 		{
-			MainUI->AddToViewport();
+			BloodUI->AddToViewport();
 		}
 	}
 
@@ -49,7 +50,12 @@ void AForestGameMode::Tick(float DeltaSeconds)
 
 
 	PlayerPoint += DeltaSeconds;
-	MainUI->SetBloodUI(PlayerPoint);
+
+	if (BloodUI)
+	{
+		BloodUI->SetBloodUI(PlayerPoint);
+	}
+	
 
 
 	if (ArmUI)
@@ -60,6 +66,7 @@ void AForestGameMode::Tick(float DeltaSeconds)
 
 void AForestGameMode::TakeDamageCharacter()
 {
+	if (!bGamePlay) { return; }
 
 	PlayerPoint -= 10.0f;
 

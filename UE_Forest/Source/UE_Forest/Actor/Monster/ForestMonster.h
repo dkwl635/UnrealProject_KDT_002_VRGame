@@ -23,7 +23,7 @@ public:
 	class USkeletalMeshComponent* SkeletalMeshComponent;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	class UCapsuleComponent* CapsuleComponent;
+	class UBoxComponent* BodyBoxComponent;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	class UBoxComponent* AttackBox;

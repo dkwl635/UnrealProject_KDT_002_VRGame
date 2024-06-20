@@ -21,12 +21,12 @@ AForestMonster::AForestMonster()
 	PrimaryActorTick.bCanEverTick = true;
 	
 	SkeletalMeshComponent = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("SkeletalMeshComponent"));
-	CapsuleComponent = CreateDefaultSubobject<UCapsuleComponent>(TEXT("CapsuleComponent"));
+	BodyBoxComponent = CreateDefaultSubobject<UBoxComponent>(TEXT("BodyBoxComponent"));
 	AttackBox = CreateDefaultSubobject<UBoxComponent>(TEXT("AttackBox"));
 	FloatingPawnMovement = CreateDefaultSubobject<UFloatingPawnMovement>(TEXT("FloatingPawnMovement"));
 	StepAudioComponent = CreateDefaultSubobject<UAudioComponent>(TEXT("StepAudioComponent"));
 
-	SetRootComponent(CapsuleComponent);
+	SetRootComponent(BodyBoxComponent);
 	SkeletalMeshComponent->SetupAttachment(GetRootComponent());
 	AttackBox->SetupAttachment(GetRootComponent());
 	FloatingPawnMovement->UpdatedComponent = GetRootComponent();
@@ -60,8 +60,8 @@ void AForestMonster::BeginPlay()
 		MonsterAnimInstance->DieEvenet.BindUObject(this, &AForestMonster::MonsterDisable);
 	}
 
-	BodyOrginECollision = CapsuleComponent->GetCollisionEnabled();
-	AttackBoxOrginECollision = CapsuleComponent->GetCollisionEnabled();
+	BodyOrginECollision = BodyBoxComponent->GetCollisionEnabled();
+	AttackBoxOrginECollision = BodyBoxComponent->GetCollisionEnabled();
 
 
 }
@@ -162,7 +162,7 @@ void AForestMonster::Die()
 {
 	isDie = true;
 	OnwerController->StopMovement();
-	CapsuleComponent->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	BodyBoxComponent->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	AttackBox->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 
 }
@@ -170,7 +170,7 @@ void AForestMonster::Die()
 void AForestMonster::MonsterDisable()
 {
 	SkeletalMeshComponent->SetVisibility(false, true);
-	CapsuleComponent->SetVisibility(false);
+	BodyBoxComponent->SetVisibility(false);
 	AttackBox->SetVisibility(false);
 }
 
@@ -178,10 +178,10 @@ void AForestMonster::MonsterSpawn()
 {
 	SkeletalMeshComponent->SetVisibility(true, true);
 
-	CapsuleComponent->SetVisibility(true);
+	BodyBoxComponent->SetVisibility(true);
 	AttackBox->SetVisibility(true);
 
-	CapsuleComponent->SetCollisionEnabled(BodyOrginECollision);
+	BodyBoxComponent->SetCollisionEnabled(BodyOrginECollision);
 	AttackBox->SetCollisionEnabled(AttackBoxOrginECollision);
 
 	MonsterSpawnEvent();

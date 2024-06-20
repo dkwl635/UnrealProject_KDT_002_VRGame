@@ -36,7 +36,7 @@ public:
 
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	TSubclassOf<class UUserWidget> MainUIWidgetClass = nullptr;
+	TSubclassOf<class UUserWidget> BloodWidgetClass = nullptr;
 
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
@@ -44,14 +44,13 @@ public:
 
 	int8 GoalCount = 5;
 	int8 OrbCount = 0;
-
-private:
-	class UMainUI* MainUI;
-
 	bool bGamePlay = false;
+
 public :
 	float PlayerPoint = 100.0f;
 	class UArmUI* ArmUI;
+	class UMainUI* MainUI;
+	class UBloodUI* BloodUI;
 
 public:
 	virtual void Tick(float DeltaSeconds) override;

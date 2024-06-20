@@ -31,6 +31,7 @@ public:
 	/*UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	class UNiagaraComponent* NS_Beam;*/
 
+	bool isRight = false;
 private:
 	UPROPERTY(VisibleAnywhere, Meta = (AllowPrivateAccess = true))
 	class UWeaponAnimInstance* WeaponAnimInstance;
@@ -65,6 +66,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Materials")
 	class UMaterialInterface* OriginalMaterial;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	class UHapticFeedbackEffect_Base* HapticFeedbackEffect_Base;
+	
 
 
 public: 
@@ -83,6 +87,9 @@ public:
 	
 		UFUNCTION(BlueprintImplementableEvent)
 	void DetachGun_Receive();
+
+
+
 
 
 

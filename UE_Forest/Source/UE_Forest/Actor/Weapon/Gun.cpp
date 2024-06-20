@@ -8,6 +8,8 @@
 #include "NiagaraComponent.h"
 #include "AnimInstance//VRHandAnimInstance.h"
 #include "Materials/MaterialInterface.h"
+#include "Kismet/GameplayStatics.h"
+#include "Haptics/HapticFeedbackEffect_Base.h"
 
 
 #include "DrawDebugHelpers.h"
@@ -49,23 +51,25 @@ void AGun::Shoot()
 
 	if (MagazineAmmo <= 0)
 	{
+		UGameplayStatics::GetPlayerController(GetWorld(), 0)->PlayHapticEffect(HapticFeedbackEffect_Base,
+			isRight == true ? EControllerHand::Right : EControllerHand::Left);
+
 		return;
 	}
 	MagazineAmmo--;
 	WeaponAnimInstance->Shoot();
 	
+	//GetWorld()->GetFirstPlayerController()->ClientPlayForceFeedback(isRight == true ? ForceFeedbackEffect_R : ForceFeedbackEffect_L);
+	UGameplayStatics::GetPlayerController(GetWorld(), 0)->PlayHapticEffect(HapticFeedbackEffect_Base,
+		isRight == true ? EControllerHand::Right : EControllerHand::Left);
+
 
 	FVector SocketLocation = SkeletalMeshComponent->GetSocketLocation(SocketName);
 	FVector ForwardVector = GetActorForwardVector();
-\
 
 	FVector Start = SocketLocation;
 	FVector End = Start + (ForwardVector * 1000.0f); // 
-
-	
 	FHitResult HitResult;
-
-	
 	FCollisionQueryParams CollisionParams;
 	CollisionParams.AddIgnoredActor(this);
 
@@ -174,11 +178,13 @@ void AGun::Grab(UVRHandSkeletalMeshComponent* Hand)
 	{
 		SetActorRelativeLocation(AttachPos_L.Pos);
 		SetActorRelativeRotation(AttachPos_L.Rot);
+		isRight = false;
 	}
 	else
 	{
 		SetActorRelativeLocation(AttachPos_R.Pos);
 		SetActorRelativeRotation(AttachPos_R.Rot);
+		isRight = true;
 	}
 	bHave = true;
 	//SetActorLocation(AttachPos_R.Pos);

@@ -2,36 +2,30 @@
 
 
 #include "UI/MainUI.h"
-#include "Components/Image.h"
-#include "Components/TextBlock.h"
+
+#include "Components/CanvasPanel.h"
 #include "Slate/SlateGameResources.h"
+#include "GameMode/ForestGameMode.h"
 
-void UMainUI::SetBloodUI(float PlayerPoint)
+
+void UMainUI::BeginPlay()
 {
-	float a = (100.0f - PlayerPoint);
-	if (a < 0.0f)
+	AForestGameMode* GameMode = Cast<AForestGameMode>( GetWorld()->GetAuthGameMode());
+	if (GameMode)
 	{
-		a = 0;
+		GameMode->MainUI = this;
 	}
-	else
-	{
-		a = a / 100.0f;
-	}
-
-    if (Blood)
-    {
-		 FLinearColor NewColor = FLinearColor(1.0f, 0.0f, 0.0f ,a);
-		 Blood->SetBrushTintColor(NewColor);
-    }
 }
 
 void UMainUI::ShowGameOver()
 {
-	GameOverTextBlock->SetVisibility(ESlateVisibility::Visible);
+	LosePanel->SetVisibility(ESlateVisibility::Visible);
+	ButtonPanel->SetVisibility(ESlateVisibility::Visible);
 }
 
 void UMainUI::ShowGameClear()
 {
-	GameClearTextBlock->SetVisibility(ESlateVisibility::Visible);
+	WinPanel->SetVisibility(ESlateVisibility::Visible);
+	ButtonPanel->SetVisibility(ESlateVisibility::Visible);
 }
 
