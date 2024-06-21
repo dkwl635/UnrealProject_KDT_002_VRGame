@@ -204,3 +204,12 @@ void AVRCharacter::ForestGameStart()
 {
 	bGameStart = true;
 }
+
+void AVRCharacter::ForestGameEnd()
+{
+	bGameStart = false;
+
+	FVector pos(-15000, -15000, 2100);
+
+	SetActorLocation(pos);
+}

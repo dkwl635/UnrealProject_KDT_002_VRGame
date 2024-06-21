@@ -105,8 +105,8 @@ void AForestGameMode::GameStart()
 			Interface->ForestGameStart();
 		}
 	}
-
-
+	//TestValue
+	PlayerPoint = 20.0f;
 	if (ArmUI)
 	{
 		ArmUI->SetPercent(1);
@@ -118,11 +118,29 @@ void AForestGameMode::GameStart()
 
 void AForestGameMode::GameClear()
 {
+	
+
+
 	if (!bGamePlay) { return; }
 	if (MainUI)
 	{
 		MainUI->ShowGameClear();
 	}
+
+	TArray<AActor*> FoundActors;
+	UGameplayStatics::GetAllActorsWithInterface(GetWorld(), UGameStart::StaticClass(), FoundActors);
+
+	for (AActor* Actor : FoundActors)
+	{
+		IGameStart* Interface = Cast<IGameStart>(Actor);
+		if (Interface)
+		{
+			Interface->ForestGameEnd();
+		}
+	}
+
+
+
 	bGamePlay = false;
 }
 
@@ -134,6 +152,18 @@ void AForestGameMode::GameOver()
 		MainUI->ShowGameOver();
 	}
 	
+	TArray<AActor*> FoundActors;
+	UGameplayStatics::GetAllActorsWithInterface(GetWorld(), UGameStart::StaticClass(), FoundActors);
+
+	for (AActor* Actor : FoundActors)
+	{
+		IGameStart* Interface = Cast<IGameStart>(Actor);
+		if (Interface)
+		{
+			Interface->ForestGameEnd();
+		}
+	}
+
 	bGamePlay = false;
 }
 

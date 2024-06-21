@@ -91,5 +91,6 @@ public:
 
 
 	void ForestGameStart() override;
+	void ForestGameEnd() override;
 
 };

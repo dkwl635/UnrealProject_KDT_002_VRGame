@@ -50,5 +50,6 @@ public:
 	
 	// IGameStart
 	void ForestGameStart() override;
+	void ForestGameEnd() override;
 
 };

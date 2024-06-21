@@ -22,6 +22,6 @@ class UE_FOREST_API IGameStart
 
 	// Add interface functions to this class. This is the class that will be inherited to implement this interface.
 public:
-
 	virtual void ForestGameStart() = 0;
+	virtual void ForestGameEnd() = 0;
 };

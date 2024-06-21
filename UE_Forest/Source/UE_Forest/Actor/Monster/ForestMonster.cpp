@@ -209,6 +209,12 @@ void AForestMonster::ForestGameStart()
 
 }
 
+void AForestMonster::ForestGameEnd()
+{
+
+
+}
+
 bool AForestMonster::IsDie()
 {
 	return isDie;

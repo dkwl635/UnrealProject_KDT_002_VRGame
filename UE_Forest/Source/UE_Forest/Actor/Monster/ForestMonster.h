@@ -114,5 +114,6 @@ public:
 	void MonsterSpawnEvent();
 
 	void ForestGameStart() override;
+	void ForestGameEnd() override;
 
 };
