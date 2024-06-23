@@ -3,14 +3,17 @@
 
 #include "GameMode/ForestGameMode.h"
 #include "UI/MainUI.h"
-#include	"Interface/GameStart.h"
+#include "UI/BloodUI.h"
+#include "Interface/GameStart.h"
 #include "Kismet/GameplayStatics.h"
 #include "HeadMountedDisplayFunctionLibrary.h"
+#include "UI/ArmUI.h"
+
 APlayerController* AForestGameMode::Login(UPlayer* NewPlayer, ENetRole InRemoteRole, const FString& Portal, const FString& Options, const FUniqueNetIdRepl& UniqueId, FString& ErrorMessage)
 {
 	const bool bVR = UHeadMountedDisplayFunctionLibrary::IsHeadMountedDisplayEnabled();
-	//if (bVR)
-	if (true)
+	if (bVR)
+	//if (true)
 	{
 		DefaultPawnClass = VRPawn;
 		//DefaultPawnClass = AVRCharacter::StaticClass();
@@ -23,12 +26,12 @@ void AForestGameMode::BeginPlay()
 {
 	Super::BeginPlay();
 
-	if (MainUIWidgetClass != nullptr)
+	if (BloodWidgetClass != nullptr)
 	{
-		MainUI = CreateWidget<UMainUI>(GetWorld(), MainUIWidgetClass);
-		if (MainUI != nullptr)
+		BloodUI = CreateWidget<UBloodUI>(GetWorld(), BloodWidgetClass);
+		if (BloodUI != nullptr)
 		{
-			MainUI->AddToViewport();
+			BloodUI->AddToViewport();
 		}
 	}
 
@@ -47,14 +50,25 @@ void AForestGameMode::Tick(float DeltaSeconds)
 
 
 	PlayerPoint += DeltaSeconds;
-	MainUI->SetBloodUI(PlayerPoint);
+
+	if (BloodUI)
+	{
+		BloodUI->SetBloodUI(PlayerPoint);
+	}
+	
+
+
+	if (ArmUI)
+	{
+		ArmUI->SetPercent(PlayerPoint * 0.01f);
+	}
 }
 
 void AForestGameMode::TakeDamageCharacter()
 {
+	if (!bGamePlay) { return; }
 
 	PlayerPoint -= 10.0f;
-	MainUI->SetBloodUI(PlayerPoint);
 
 	if (PlayerPoint <= 0.0f)
 	{
@@ -71,6 +85,11 @@ void AForestGameMode::AddOrb()
 	{
 		GameClear();
 	}
+
+	if (ArmUI)
+	{
+		ArmUI->SetCount(OrbCount);
+	}
 }
 
 void AForestGameMode::GameStart()
@@ -86,17 +105,42 @@ void AForestGameMode::GameStart()
 			Interface->ForestGameStart();
 		}
 	}
+	//TestValue
+	PlayerPoint = 20.0f;
+	if (ArmUI)
+	{
+		ArmUI->SetPercent(1);
+		ArmUI->SetCount(0);
+	}
 
 
 }
 
 void AForestGameMode::GameClear()
 {
+	
+
+
 	if (!bGamePlay) { return; }
 	if (MainUI)
 	{
 		MainUI->ShowGameClear();
 	}
+
+	TArray<AActor*> FoundActors;
+	UGameplayStatics::GetAllActorsWithInterface(GetWorld(), UGameStart::StaticClass(), FoundActors);
+
+	for (AActor* Actor : FoundActors)
+	{
+		IGameStart* Interface = Cast<IGameStart>(Actor);
+		if (Interface)
+		{
+			Interface->ForestGameEnd();
+		}
+	}
+
+
+
 	bGamePlay = false;
 }
 
@@ -108,6 +152,18 @@ void AForestGameMode::GameOver()
 		MainUI->ShowGameOver();
 	}
 	
+	TArray<AActor*> FoundActors;
+	UGameplayStatics::GetAllActorsWithInterface(GetWorld(), UGameStart::StaticClass(), FoundActors);
+
+	for (AActor* Actor : FoundActors)
+	{
+		IGameStart* Interface = Cast<IGameStart>(Actor);
+		if (Interface)
+		{
+			Interface->ForestGameEnd();
+		}
+	}
+
 	bGamePlay = false;
 }
 

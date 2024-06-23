@@ -23,7 +23,7 @@ public:
 	class USkeletalMeshComponent* SkeletalMeshComponent;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	class UCapsuleComponent* CapsuleComponent;
+	class UBoxComponent* BodyBoxComponent;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	class UBoxComponent* AttackBox;
@@ -56,6 +56,12 @@ private:
 	FName IsMoveKey = "IsMove";
 	FName IsAttackKey = "IsAttack";
 	FName TargetKey = "Target";
+
+	class UMaterialInstanceDynamic* DynMaterial = nullptr;
+
+
+
+
 
 	bool isDie = false;
 
@@ -93,7 +99,6 @@ public:
 	UFUNCTION(BlueprintImplementableEvent)
 	void TakeSuccessDamage();
 
-	// IAttack을(를) 통해 상속됨
 	void StartAttack()override;
 	void OnAttack() override;
 	void AttackDamage() override;
@@ -105,12 +110,10 @@ public:
 	void Die();
 	void MonsterDisable();
 	void MonsterSpawn();
+	UFUNCTION(BlueprintImplementableEvent)
+	void MonsterSpawnEvent();
 
-
-	
-	
-
-	// IGameStart을(를) 통해 상속됨
 	void ForestGameStart() override;
+	void ForestGameEnd() override;
 
 };

@@ -12,6 +12,7 @@
 #include "GameMode/ForestGameMode.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "Components/AudioComponent.h"
+#include "Materials/MaterialInstanceDynamic.h"
 
 // Sets default values
 AForestMonster::AForestMonster()
@@ -20,12 +21,12 @@ AForestMonster::AForestMonster()
 	PrimaryActorTick.bCanEverTick = true;
 	
 	SkeletalMeshComponent = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("SkeletalMeshComponent"));
-	CapsuleComponent = CreateDefaultSubobject<UCapsuleComponent>(TEXT("CapsuleComponent"));
+	BodyBoxComponent = CreateDefaultSubobject<UBoxComponent>(TEXT("BodyBoxComponent"));
 	AttackBox = CreateDefaultSubobject<UBoxComponent>(TEXT("AttackBox"));
 	FloatingPawnMovement = CreateDefaultSubobject<UFloatingPawnMovement>(TEXT("FloatingPawnMovement"));
 	StepAudioComponent = CreateDefaultSubobject<UAudioComponent>(TEXT("StepAudioComponent"));
 
-	SetRootComponent(CapsuleComponent);
+	SetRootComponent(BodyBoxComponent);
 	SkeletalMeshComponent->SetupAttachment(GetRootComponent());
 	AttackBox->SetupAttachment(GetRootComponent());
 	FloatingPawnMovement->UpdatedComponent = GetRootComponent();
@@ -37,6 +38,9 @@ AForestMonster::AForestMonster()
 
 	AttackBox->OnComponentBeginOverlap.AddDynamic(this, &AForestMonster::OnBeginHitBox);
 	AttackBox->OnComponentEndOverlap.AddDynamic(this, &AForestMonster::OnEndHitBox);
+
+	
+
 }
 
 // Called when the game starts or when spawned
@@ -56,8 +60,8 @@ void AForestMonster::BeginPlay()
 		MonsterAnimInstance->DieEvenet.BindUObject(this, &AForestMonster::MonsterDisable);
 	}
 
-	BodyOrginECollision = CapsuleComponent->GetCollisionEnabled();
-	AttackBoxOrginECollision = CapsuleComponent->GetCollisionEnabled();
+	BodyOrginECollision = BodyBoxComponent->GetCollisionEnabled();
+	AttackBoxOrginECollision = BodyBoxComponent->GetCollisionEnabled();
 
 
 }
@@ -125,7 +129,7 @@ float AForestMonster::TakeDamage(float Damage, FDamageEvent const& DamageEvent, 
 
 void AForestMonster::StartAttack()
 {
-	//애니메이션 실행
+
 	if (MonsterAnimInstance)
 	{
 		MonsterAnimInstance->StartAttackMontage();
@@ -135,7 +139,7 @@ void AForestMonster::StartAttack()
 
 void AForestMonster::OnAttack()
 {
-	//피격확인
+	
 	if (IsInHitBoxCharacter)
 	{
 		UE_LOG(LogTemp, Display, TEXT("OnAttack"));
@@ -156,9 +160,9 @@ bool AForestMonster::IsAttackable()
 
 void AForestMonster::Die()
 {
-	OnwerController->StopMovement();
 	isDie = true;
-	CapsuleComponent->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	OnwerController->StopMovement();
+	BodyBoxComponent->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	AttackBox->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 
 }
@@ -166,22 +170,21 @@ void AForestMonster::Die()
 void AForestMonster::MonsterDisable()
 {
 	SkeletalMeshComponent->SetVisibility(false, true);
-	
-
-	CapsuleComponent->SetVisibility(false);
+	BodyBoxComponent->SetVisibility(false);
 	AttackBox->SetVisibility(false);
-
 }
 
 void AForestMonster::MonsterSpawn()
 {
 	SkeletalMeshComponent->SetVisibility(true, true);
 
-	CapsuleComponent->SetVisibility(true);
+	BodyBoxComponent->SetVisibility(true);
 	AttackBox->SetVisibility(true);
 
-	CapsuleComponent->SetCollisionEnabled(BodyOrginECollision);
+	BodyBoxComponent->SetCollisionEnabled(BodyOrginECollision);
 	AttackBox->SetCollisionEnabled(AttackBoxOrginECollision);
+
+	MonsterSpawnEvent();
 
 	int32 RandomValueX = FMath::RandRange(-12500, 12500);
 	int32 RandomValueY = FMath::RandRange(-12500, 12500);
@@ -203,6 +206,12 @@ void AForestMonster::ForestGameStart()
 	GameMode = Cast<AForestGameMode>(GetWorld()->GetAuthGameMode());
 	AActor* Target = GameMode->ForestCharacter;
 	BlackboardComponent->SetValueAsObject(TargetKey, Target);
+
+}
+
+void AForestMonster::ForestGameEnd()
+{
+
 
 }
 

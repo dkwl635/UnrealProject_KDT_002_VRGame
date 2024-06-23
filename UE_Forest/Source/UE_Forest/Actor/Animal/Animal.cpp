@@ -62,6 +62,10 @@ void AAnimal::ForestGameStart()
 	MoveToStart();
 }
 
+void AAnimal::ForestGameEnd()
+{
+}
+
 
 
 

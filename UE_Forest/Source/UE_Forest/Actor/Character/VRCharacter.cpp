@@ -8,6 +8,8 @@
 #include "Kismet/KismetMathLibrary.h"
 #include "EnhancedInputSubsystems.h"
 #include  "Input/InputData.h"
+#include "Components/WidgetInteractionComponent.h"
+#include "Components/VRUWidgetInteractionComponent.h"
 
 
 AVRCharacter::AVRCharacter()
@@ -39,6 +41,11 @@ AVRCharacter::AVRCharacter()
 	RightHandCollision->SetCollisionProfileName(TEXT("Hand"));
 	RightHandCollision->CanCharacterStepUpOn = ECanBeCharacterBase::ECB_No;
 
+    VRUWidgetInteractionComponent = CreateDefaultSubobject<UVRUWidgetInteractionComponent>(TEXT("VRUWidgetInteractionComponent"));
+	VRUWidgetInteractionComponent->SetupAttachment(RightHand);
+	RightHand->VRUWidgetInteractionComponent = VRUWidgetInteractionComponent;
+	//VRUWidgetInteractionComponent->Show();
+
 	const FTransform RTransform = FTransform(FRotator(25.0, 0.0, 90.0), FVector(-2.98, 3.5, 4.56));
 	RightHand->SetRelativeTransform(RTransform);
 
@@ -65,6 +72,9 @@ void AVRCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 
+	
+	
+
 	if (APlayerController* PC = Cast<APlayerController>(GetController()))
 	{
 		UEnhancedInputLocalPlayerSubsystem* Subsystem =
@@ -72,7 +82,8 @@ void AVRCharacter::BeginPlay()
 	
 		Subsystem->AddMappingContext(LeftHand->InputData->InputMappingContext, 1);
 	}
-	else {  }
+	
+
 }
 
 void AVRCharacter::Tick(float DeltaTime)
@@ -90,6 +101,9 @@ void AVRCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompone
 	{
 		// Moving
 		EnhancedInputComponent->BindAction(MoveInputData->Move, ETriggerEvent::Triggered, this, &AVRCharacter::OnVRMove);
+			EnhancedInputComponent->BindAction(MoveInputData->Look, ETriggerEvent::Triggered, this, &AVRCharacter::OnVRRot);
+		
+		//EnhancedInputComponent->BindAction(MoveInputData->Move, ETriggerEvent::Triggered, this, &AVRCharacter::OnVRMove);
 
 		// Looking
 		//EnhancedInputComponent->BindAction(MoveInputData->Look, ETriggerEvent::Triggered, this, &AForestCharacter::Look);
@@ -139,9 +153,11 @@ void AVRCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompone
 void AVRCharacter::OnVRMove(const FInputActionValue& InputActionValue)
 {
 
+	if (!bGameStart) { return; }
+
 	const FVector2D ActionValue = InputActionValue.Get<FVector2D>();
 
-	const FRotator CameraRotator = FollowCamera->GetRelativeRotation();
+	const FRotator CameraRotator = FollowCamera->GetRelativeRotation() + GetActorRotation();
 	const FRotator CameraYawRotator = FRotator(0., CameraRotator.Yaw, 0.);
 
 	if (!FMath::IsNearlyZero(ActionValue.Y))
@@ -157,6 +173,23 @@ void AVRCharacter::OnVRMove(const FInputActionValue& InputActionValue)
 	}
 }
 
+void AVRCharacter::OnVRRot(const FInputActionValue& InputActionValue)
+{
+	float AxisValue = InputActionValue.Get<FVector2D>().X;
+
+	
+	float RotationAmount = AxisValue * 5.0f; // 회전 속도를 조절할 수 있습니다.
+
+	
+	FRotator CurrentRotation = GetActorRotation();
+
+	
+	FRotator NewRotation = FRotator(0.0f, CurrentRotation.Yaw + RotationAmount, 0.0f);
+
+
+	SetActorRotation(NewRotation);
+}
+
 void AVRCharacter::OnGrabStarted(UMotionControllerComponent* MotionControllerComponent, const bool bLeft, const FInputActionValue& InputActionValue)
 {
 	GEngine->AddOnScreenDebugMessage(INDEX_NONE, 5.f, FColor::Red, TEXT("OnGrabStarted"));
@@ -165,4 +198,18 @@ void AVRCharacter::OnGrabStarted(UMotionControllerComponent* MotionControllerCom
 void AVRCharacter::OnGrabCompleted(UMotionControllerComponent* MotionControllerComponent, const bool bLeft, const FInputActionValue& InputActionValue)
 {
 	GEngine->AddOnScreenDebugMessage(INDEX_NONE, 5.f, FColor::Red, TEXT("OnGrabCompleted"));
+}
+
+void AVRCharacter::ForestGameStart()
+{
+	bGameStart = true;
+}
+
+void AVRCharacter::ForestGameEnd()
+{
+	bGameStart = false;
+
+	FVector pos(-15000, -15000, 2100);
+
+	SetActorLocation(pos);
 }

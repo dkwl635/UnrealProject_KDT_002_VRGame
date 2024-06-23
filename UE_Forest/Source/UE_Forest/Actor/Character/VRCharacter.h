@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "Actor/Character/ForestCharacter.h"
 #include "MotionControllerComponent.h"
+#include "Interface/GameStart.h"
 #include "VRCharacter.generated.h"
 
 /**
@@ -15,7 +16,7 @@ static inline const FName RightGrip = TEXT("RightGrip");
 
 
 UCLASS()
-class UE_FOREST_API AVRCharacter : public AForestCharacter
+class UE_FOREST_API AVRCharacter : public AForestCharacter , public IGameStart
 {
 	GENERATED_BODY()
 	
@@ -37,6 +38,7 @@ public:
 	//void SetLeftHandWidgetClass(TSubclassOf<UUserWidget> InWidgetClass);
 
 	void OnVRMove(const FInputActionValue& InputActionValue);
+	void OnVRRot(const FInputActionValue& InputActionValue);
 
 	void OnGrabLeftStarted(const FInputActionValue& InputActionValue) { OnGrabStarted(MotionControllerLeft, true, InputActionValue); }
 	void OnGrabRightStarted(const FInputActionValue& InputActionValue) { OnGrabStarted(MotionControllerRight, false, InputActionValue); }
@@ -70,7 +72,10 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	class UInputData* VRMoveInputData;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	class UVRUWidgetInteractionComponent* VRUWidgetInteractionComponent;
 
+	bool bGameStart = false;
 	//UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	//class UObject* VRHandsInputDataConfig;
 	//class UVRHandsInputDataConfig* VRHandsInputDataConfig;
@@ -85,5 +90,7 @@ public:
 	//class UWidgetComponent* LeftHandWidget;
 
 
+	void ForestGameStart() override;
+	void ForestGameEnd() override;
 
 };
